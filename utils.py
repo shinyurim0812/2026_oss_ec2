@@ -623,29 +623,45 @@ def reset_quiz_state() -> None:
 
 
 def logout_user() -> None:
+    if st.session_state.get("username"):
+        log_server_event("logout", st.session_state["username"], "success")
     st.session_state["logged_in"] = False
     st.session_state["username"] = ""
     st.session_state["display_name"] = ""
     reset_quiz_state()
 
 
+def log_server_event(action: str, username: str, outcome: str, detail: str = "") -> None:
+    """Print concise server-side logs for demo recording."""
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    safe_username = username or "<empty>"
+    message = f"[SERVER LOG] {timestamp} action={action} user={safe_username} outcome={outcome}"
+    if detail:
+        message += f" detail={detail}"
+    print(message, flush=True)
+
+
 def authenticate_user(username: str, password: str) -> tuple[bool, str]:
     state = load_app_state()
     user = state["users"].get(username)
     if not user:
+        log_server_event("login", username, "failed", "user_not_found")
         return False, "존재하지 않는 사용자입니다."
     if user["password"] != password:
+        log_server_event("login", username, "failed", "wrong_password")
         return False, "비밀번호가 올바르지 않습니다."
 
     st.session_state["logged_in"] = True
     st.session_state["username"] = username
     st.session_state["display_name"] = user.get("display_name", username)
+    log_server_event("login", username, "success")
     return True, "로그인에 성공했습니다."
 
 
 def register_user(username: str, password: str, display_name: str) -> tuple[bool, str]:
     state = load_app_state()
     if username in state["users"]:
+        log_server_event("register", username, "failed", "duplicate_username")
         return False, "이미 존재하는 아이디입니다."
     
     state["users"][username] = {
@@ -655,6 +671,7 @@ def register_user(username: str, password: str, display_name: str) -> tuple[bool
         "history": [],
     }
     save_app_state(state)
+    log_server_event("register", username, "success")
     return True, "회원가입에 성공했습니다. 왼쪽 탭에서 로그인해 주세요."
 
 
@@ -662,11 +679,14 @@ def change_password(username: str, current_password: str, new_password: str) -> 
     state = load_app_state()
     user = state["users"].get(username)
     if not user:
+        log_server_event("change_password", username, "failed", "user_not_found")
         return False, "사용자 정보를 찾지 못했습니다."
     if user["password"] != current_password:
+        log_server_event("change_password", username, "failed", "wrong_current_password")
         return False, "현재 비밀번호가 일치하지 않습니다."
     user["password"] = new_password
     save_app_state(state)
+    log_server_event("change_password", username, "success")
     return True, "비밀번호를 변경했습니다."
 
 
