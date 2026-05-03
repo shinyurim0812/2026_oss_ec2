@@ -1,0 +1,36 @@
+{
+  "users": {
+    "a": {
+      "password": "a",
+      "display_name": "a",
+      "latest_result": {
+        "timestamp": "2026-05-03 21:53:09",
+        "type_key": "theme",
+        "type_label": "🗺️ 낭만적 탐험가 (Explorer)",
+        "players_preference": "상황마다 다름",
+        "time_preference": "120분 이상",
+        "complexity_preference": "어려움",
+        "top_games": [
+          "Star Wars: Rebellion",
+          "Twilight Struggle",
+          "War of the Ring: Second Edition"
+        ]
+      },
+      "history": [
+        {
+          "timestamp": "2026-05-03 21:53:09",
+          "type_key": "theme",
+          "type_label": "🗺️ 낭만적 탐험가 (Explorer)",
+          "players_preference": "상황마다 다름",
+          "time_preference": "120분 이상",
+          "complexity_preference": "어려움",
+          "top_games": [
+            "Star Wars: Rebellion",
+            "Twilight Struggle",
+            "War of the Ring: Second Edition"
+          ]
+        }
+      ]
+    }
+  }
+}
